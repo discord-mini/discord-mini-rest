@@ -1,0 +1,315 @@
+{
+  "guilds": {
+    "{guild.id}": {
+      "audit-logs": {
+        "methods": [
+          "GET"
+        ]
+      },
+      "emojis": {
+        "methods": [
+          "GET",
+          "POST"
+        ],
+        "{emoji.id}": {
+          "methods": [
+            "GET",
+            "PATCH",
+            "DELETE"
+          ]
+        }
+      },
+      "methods": [
+        "GET",
+        "PATCH",
+        "DELETE"
+      ],
+      "channels": {
+        "methods": [
+          "GET",
+          "POST",
+          "PATCH"
+        ]
+      },
+      "members": {
+        "{user.id}": {
+          "methods": [
+            "GET",
+            "PUT",
+            "PATCH",
+            "DELETE"
+          ],
+          "roles": {
+            "{role.id}": {
+              "methods": [
+                "PUT",
+                "DELETE"
+              ]
+            }
+          }
+        },
+        "methods": [
+          "GET"
+        ],
+        "@me": {
+          "nick": {
+            "methods": [
+              "PATCH"
+            ]
+          }
+        }
+      },
+      "bans": {
+        "methods": [
+          "GET"
+        ],
+        "{user.id}": {
+          "methods": [
+            "PUT",
+            "DELETE"
+          ]
+        }
+      },
+      "roles": {
+        "methods": [
+          "GET",
+          "POST",
+          "PATCH"
+        ],
+        "{role.id}": {
+          "methods": [
+            "PATCH",
+            "DELETE"
+          ]
+        }
+      },
+      "prune": {
+        "methods": [
+          "GET",
+          "POST"
+        ]
+      },
+      "regions": {
+        "methods": [
+          "GET"
+        ]
+      },
+      "invites": {
+        "methods": [
+          "GET"
+        ]
+      },
+      "integrations": {
+        "methods": [
+          "GET",
+          "POST"
+        ],
+        "{integration.id}": {
+          "methods": [
+            "PATCH",
+            "DELETE"
+          ],
+          "sync": {
+            "methods": [
+              "POST"
+            ]
+          }
+        }
+      },
+      "embed": {
+        "methods": [
+          "GET",
+          "PATCH"
+        ]
+      },
+      "vanity-url": {
+        "methods": [
+          "GET"
+        ]
+      },
+      "webhooks": {
+        "methods": [
+          "GET"
+        ]
+      }
+    },
+    "methods": [
+      "POST"
+    ]
+  },
+  "channels": {
+    "{channel.id}": {
+      "methods": [
+        "GET",
+        "PATCH",
+        "DELETE"
+      ],
+      "messages": {
+        "methods": [
+          "GET",
+          "POST"
+        ],
+        "{message.id}": {
+          "methods": [
+            "GET",
+            "PATCH",
+            "DELETE"
+          ],
+          "reactions": {
+            "{emoji}": {
+              "@me": {
+                "methods": [
+                  "PUT",
+                  "DELETE"
+                ]
+              },
+              "{user.id}": {
+                "methods": [
+                  "DELETE"
+                ]
+              },
+              "methods": [
+                "GET"
+              ]
+            },
+            "methods": [
+              "DELETE"
+            ]
+          }
+        },
+        "bulk-delete": {
+          "methods": [
+            "POST"
+          ]
+        },
+        "bulk_delete": {
+          "methods": [
+            "POST"
+          ]
+        }
+      },
+      "permissions": {
+        "{overwrite.id}": {
+          "methods": [
+            "PUT",
+            "DELETE"
+          ]
+        }
+      },
+      "invites": {
+        "methods": [
+          "GET",
+          "POST"
+        ]
+      },
+      "typing": {
+        "methods": [
+          "POST"
+        ]
+      },
+      "pins": {
+        "methods": [
+          "GET"
+        ],
+        "{message.id}": {
+          "methods": [
+            "PUT",
+            "DELETE"
+          ]
+        }
+      },
+      "recipients": {
+        "{user.id}": {
+          "methods": [
+            "PUT",
+            "DELETE"
+          ]
+        }
+      },
+      "webhooks": {
+        "methods": [
+          "POST",
+          "GET"
+        ]
+      }
+    }
+  },
+  "invites": {
+    "{invite.code}": {
+      "methods": [
+        "GET",
+        "DELETE",
+        "POST"
+      ]
+    }
+  },
+  "users": {
+    "@me": {
+      "methods": [
+        "GET",
+        "PATCH"
+      ],
+      "guilds": {
+        "methods": [
+          "GET"
+        ],
+        "{guild.id}": {
+          "methods": [
+            "DELETE"
+          ]
+        }
+      },
+      "channels": {
+        "methods": [
+          "GET",
+          "POST",
+          "POST"
+        ]
+      },
+      "connections": {
+        "methods": [
+          "GET"
+        ]
+      }
+    },
+    "{user.id}": {
+      "methods": [
+        "GET"
+      ]
+    }
+  },
+  "voice": {
+    "regions": {
+      "methods": [
+        "GET"
+      ]
+    }
+  },
+  "webhooks": {
+    "{webhook.id}": {
+      "methods": [
+        "GET",
+        "PATCH",
+        "DELETE"
+      ],
+      "{webhook.token}": {
+        "methods": [
+          "GET",
+          "PATCH",
+          "DELETE",
+          "POST"
+        ],
+        "slack": {
+          "methods": [
+            "POST"
+          ]
+        },
+        "github": {
+          "methods": [
+            "POST"
+          ]
+        }
+      }
+    }
+  }
+}
