@@ -59,7 +59,7 @@ class LimitHandler {
 					})
 					.catch((err) => {
 						if (err.response.status === 429) {
-							setTimeout(() => resolve(this.request(method, url, data, token, major, global), err.response.body.retry_after);
+							setTimeout(() => resolve(this.request(method, url, data, token, major, global)), err.response.body.retry_after);
 						} else {
 							reject(err);
 						}
