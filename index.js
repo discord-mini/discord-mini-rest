@@ -11,7 +11,7 @@ class LimitHandler {
 				const funcs = this.limits[major].queue.splice(0, this.limits[major].remaining);
 				this.limits[major].remaining -= funcs.length;
 				this.limits[major].executing = true;
-				Promise.all(funcs.map((f) => f())).then(() => {
+				Promise.all(funcs.map((f) => f().catch((e) => e))).then(() => {
 					this.limits[major].executing = false;
 				});
 			} else if (!this.limits[major].executing) {
