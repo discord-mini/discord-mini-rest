@@ -19,14 +19,14 @@ const handler = {
 				// I only want one instance of the limit handler.
 				const key = process.hrtime().join('.');
 				const prom = new Promise((resolve, reject) => {
-					process.send({
+					process.send({type: 'REST', data: {
 						method: name, 
 						url: base + target.path, 
 						data: data, 
 						token: target.token, 
 						major: target.major,
 						key: key
-					});
+					}});
 					// this way we can resolve or reject the promise
 					// from outside. it was a hack to avoid sticking
 					// a listener inside the promise tbh
