@@ -1,6 +1,8 @@
 # discord-mini-rest
 
-This is a small package that can be used to work with Discord's REST API.
+This is a small package that can be used to work with Discord's REST API. This is more for
+people who want to use Node's `cluster` module or `child_processes` so it really only works
+for those. Mainly because I have a process.send nested in the code somewhere right now so yeah.
 
 * [Quick Start](#quickstart)
 * [More Details](#details)
@@ -15,27 +17,56 @@ or
 yarn add https://github.com/rei2hu/discord-mini-rest
 ```
 
-Here's an example of sending a message to a certain channel.
-
+It's a little difficult to get setup honestly. First, you'll need one 
+parent/master process run the requester or limiter; I haven't settled
+on a name yet.
 ```js
-const { RequestBuilder } = require('rest');
-const base = RequestBuilder(token);
-
-base.channels['304250407578763265'].messages.post({content: 'hello there!'});
+const cluster = require('cluster');
+if (cluster.isMaster) {
+  const api = require('rest').requester();
+}
+```
+However, now I use IPC because I only want one instance of the
+requester to exist, so you also have to forward messages sent from
+child processes/workers to the requester. And then send the info back
+to the same worker.
+```js
+// still assuming only master will run this
+cluster.on('message', (worker, obj) => {
+  if (obj.type === 'REST') {
+    api.request(obj.data)
+      .then((r) => {
+          const [key, res] = r;
+          worker.send({type: 'REST', err: false, key, res})
+      })
+      .catch((e) => {
+          const [key, err] = e;
+          worker.send({type: 'REST', err: true, key, res: err})
+      });
+  }
+});
 ```
 
-The above code does the same as the following:
-
+You can still make requests in the same way though as long as you have
+the previous bit set up.
 ```js
-request.post('https://discordapp.com/api/channels/304250407578763265/messages')
-  .set('Authorization', 'Bot ' + token)
-  .send({content: 'hello there!'})
+const base = require('rest').base(token);
+base.channels['304250407578763265'].messages.post({content: 'hi'})
+  .then(console.log)
+  .catch(console.error)
 ```
 
-Just knowing the endpoint and method is enough to work with this library. You can read more about them on
+The above code does the same as making a `POST` request with `{content: 'hi'}`
+to `https://discordapp.com/api/channels/304250407578763265/messages` using
+your token as the authorization header.
+
+Just knowing the endpoint and method is enough to work with this library.
+You can read more about them on
 [Discord's official documentation](https://discordapp.com/developers/docs/intro).
 
 ## details
+
+(may be outdated)
 
 #### storing partial endpoints
 I doubt I used the proper terminology in the section title but you can store a partially made `RequestBuilder`
@@ -62,24 +93,4 @@ base.guilds['heheillsneakthisfakeidin'].emojis['heretoo'].get().then(console.log
 // catch triggered (404)
 base.guilds['123'].emojis['321'].get().then(console.log).catch(console.error)
 // catch triggered (404)
-```
-
-#### rate limiter
-There is also a built in rate limiter that should respect Discord's rate limits. It is exposed and you can access it like so
-
-```js
-const { Limiter } = require('rest');
-console.log(Limiter.limits);
-```
-
-If you attempt to send off more requests then are allowed, they requests are queued and will be sent off as many as possible at
-a time, resulting in a non-sequential output (well they're asynchronous anyways so you should expect it.)
-
-```js
-for (let i = 0; i < 10; i++) {
-  base.channels['304250407578763265'].messages.post({content: i});
-}
-// 0, 2, 3, 1, 4, 6, 8, 9, 7, 5
-// here, since the request limit is 5, it sends off the first 5 requests (0-4) then the
-// last 5 requests (5 - 9)
 ```

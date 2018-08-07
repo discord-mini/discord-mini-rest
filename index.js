@@ -45,8 +45,19 @@ const handler = {
 	}
 }
 
+process.on('message', obj => {
+    if (obj.type === 'REST') {
+        const {err, key, res} = obj;
+        if (err) {
+            requests[key].reject(res);
+        } else {
+            requests[key].resolve(res);
+		}
+		requests[key] = null;
+    }
+});
+
 module.exports = {
 	base: (token) => new Proxy({ path: '', map: apimap, token: token }, handler),
-	requests: requests,
 	requester: require('./limiter')
 }
