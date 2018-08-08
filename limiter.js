@@ -53,7 +53,7 @@ class LimitHandler {
                     },
                     body: JSON.stringify(data)
                 })
-                .then((res) => {
+                .then(async (res) => {
                     if (res.ok || res.status === 429) {
                         // set limit as most recent one
                         this.limits[major].limit = res.headers['x-ratelimit-limit'] || this.limits[major].limit;
@@ -68,23 +68,23 @@ class LimitHandler {
                             // or else our remaining is the smallest of our remaining or what the header says
                             // because we kind of send out multiple requests at the same time
                             this.limits[major].remaining = Math.min(res.headers['x-ratelimit-remaining'] || this.limits[major].limit, this.limits[major].remaining);
-                        }
+						}
                         if (res.ok) {
                             // only way to resolve is with an ok status
-                            resolve(Promise.all([key, res.json()]));
+                            resolve([key, await res.json()]);
                         } else {
                             // retry if not res.ok because rate limited
                             this.limits[major].queue.unshift(func)
                         }
                     } else {
-                        // some non rate limit, non ok error
-                        reject(Promise.all([key, res.json()]));
+						// some non rate limit, non ok error
+                        reject([key, await res.json()]);
                     }
                     
                 })
                 // reject on some other error
                 .catch((err) => {
-                    reject(Promise.all([key, err]));
+                    reject([key, err]);
                 });
             });
             // actually add the function
