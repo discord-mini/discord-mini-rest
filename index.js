@@ -10,7 +10,7 @@ const handler = {
 		}
 		const path = target.path + '/' + name;
 		name = name.toLowerCase();
-		let key, m;
+		let key, major;
 		if (target.map[name] && !name.startsWith('{')) {
 			return new Proxy({ path: path, map: target.map[name], major: target.major, token: target.token }, handler);
 		} else if (target.map.methods && target.map.methods.includes(name.toUpperCase())) {
@@ -19,18 +19,20 @@ const handler = {
 				// I only want one instance of the limit handler.
 				const key = process.hrtime().join('.');
 				const prom = new Promise((resolve, reject) => {
-					process.send({type: 'REST', data: {
-						method: name, 
-						url: base + target.path, 
-						data: data, 
-						token: target.token, 
-						major: target.major,
-						key: key
-					}});
+					process.send({
+						type: 'REST', data: {
+							method: name,
+							url: base + target.path,
+							data: data,
+							token: target.token,
+							major: target.major,
+							key: key
+						}
+					});
 					// this way we can resolve or reject the promise
 					// from outside. it was a hack to avoid sticking
 					// a listener inside the promise tbh
-					requests[key] = {resolve, reject};
+					requests[key] = { resolve, reject };
 				});
 				return prom;
 			}
@@ -46,15 +48,15 @@ const handler = {
 }
 
 process.on('message', obj => {
-    if (obj.type === 'REST') {
-        const {err, key, res} = obj;
-        if (err) {
-            requests[key].reject(res);
-        } else {
-            requests[key].resolve(res);
+	if (obj.type === 'REST') {
+		const { err, key, res } = obj;
+		if (err) {
+			requests[key].reject(res);
+		} else {
+			requests[key].resolve(res);
 		}
 		requests[key] = null;
-    }
+	}
 });
 
 module.exports = {
