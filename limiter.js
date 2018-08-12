@@ -54,7 +54,7 @@ class LimitHandler {
 					body: JSON.stringify(data)
 				})
 					.then(async (res) => {
-						const body = await res.json();
+						const body = res.status === 204 ? {} : await res.json();
 						if (res.ok || res.status === 429) {
 							// set limit as most recent one
 							this.limits[major].limit = res.headers.get('x-ratelimit-limit') || this.limits[major].limit;
@@ -72,7 +72,7 @@ class LimitHandler {
 							}
 							if (res.ok) {
 								// only way to resolve is with an ok status
-								resolve([key, res.status === 204 ? {} : body]);
+								resolve([key, body]);
 							} else {
 								// retry if not res.ok because rate limited
 								this.limits[major].queue.unshift(func)
