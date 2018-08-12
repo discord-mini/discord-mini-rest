@@ -54,6 +54,7 @@ class LimitHandler {
 					body: JSON.stringify(data)
 				})
 					.then(async (res) => {
+						const body = await res.json();
 						if (res.ok || res.status === 429) {
 							// set limit as most recent one
 							this.limits[major].limit = res.headers.get('x-ratelimit-limit') || this.limits[major].limit;
@@ -71,14 +72,15 @@ class LimitHandler {
 							}
 							if (res.ok) {
 								// only way to resolve is with an ok status
-								resolve([key, res.status === 204 ? '' : await res.json()]);
+								resolve([key, res.status === 204 ? {} : body]);
 							} else {
 								// retry if not res.ok because rate limited
 								this.limits[major].queue.unshift(func)
+								setTimeout(this.checkQueue.bind(this), body.retry_after + 500);
 							}
 						} else {
 							// some non rate limit, non ok error
-							reject([key, await res.json()]);
+							reject([key, body]);
 						}
 
 					})
@@ -96,6 +98,5 @@ class LimitHandler {
 		});
 	}
 }
-const limiter = new LimitHandler();
 
-module.exports = () => limiter;
+module.exports = () => new LimitHandler();
