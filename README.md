@@ -60,6 +60,23 @@ The above code does the same as making a `POST` request with `{content: 'hi'}`
 to `https://discordapp.com/api/channels/304250407578763265/messages` using
 your token as the authorization header.
 
+If you don't want to use `cluster`, you can use `child_process` to fork another
+node process.
+```js
+    // index.js
+    const api = require('rest').requester();
+    const ch = require('child_process').fork(__dirname + '/main.js');
+    ch.on('message', (obj) => {
+        if (obj.type === 'REST') {
+          // ...
+        }
+    });
+    
+    // main.js
+    const base = require('rest').base(token);
+    // ...
+```
+
 Just knowing the endpoint and method is enough to work with this library.
 You can read more about them on
 [Discord's official documentation](https://discordapp.com/developers/docs/intro).
